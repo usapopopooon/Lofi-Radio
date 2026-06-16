@@ -5,6 +5,10 @@ const db2 = require("../../schema/dj");
 module.exports = {
   name: 'interactionCreate',
   run: async (client, interaction) => {
+    client.logger.log(
+      `[INTERACTION] Raw received type=${interaction.type} command=${interaction.commandName || interaction.customId || "unknown"} application=${interaction.applicationId || "unknown"} guild=${interaction.guildId || "dm"}`,
+      "log",
+    );
     if (interaction.isCommand() || interaction.isContextMenu()) {
       client.logger.log(
         `[INTERACTION] Received /${interaction.commandName} in guild ${interaction.guildId || "dm"} channel ${interaction.channelId || "unknown"} from ${interaction.user?.tag || interaction.user?.id || "unknown"}`,

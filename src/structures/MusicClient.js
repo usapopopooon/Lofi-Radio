@@ -178,7 +178,12 @@ console.clear()
         }
 
         await this.application.commands.set([]);
-        await Promise.all(guilds.map((guild) => guild.commands.set(data)));
+        const registered = await Promise.all(guilds.map((guild) => guild.commands.set(data)));
+        registered.forEach((commands, index) => {
+          const guild = guilds[index];
+          const summary = commands.map((command) => `/${command.name}:${command.id}`).join(", ");
+          this.logger.log(`Registered guild commands for ${guild.name} [${guild.id}]: ${summary}`, "cmd");
+        });
         this.logger.log(`Successfully Loaded Slash Commands on ${guilds.length} guild${guilds.length > 1 ? "s" : ""}`, "cmd");
       } catch (e) {
         console.log(e);
