@@ -3,11 +3,11 @@ require("dotenv").config();
 module.exports = {
   token: process.env.TOKEN || '', 
   prefix: process.env.PREFIX || '.', 
-  ownerID: process.env.OWNERID?.split(',') || ['519666024220721152','965503342249914408'], 
+  ownerID: process.env.OWNERID ? process.env.OWNERID.split(',') : ['519666024220721152','965503342249914408'], 
   SpotifyID: process.env.SPOTIFYID || '', 
   SpotifySecret: process.env.SPOTIFYSECRET || '', 
   mongourl: process.env.MONGO_URI || '', 
-  embedColor: process.env.COlOR || '#DDBD86', // 
+  embedColor: process.env.COLOR || process.env.COlOR || '#DDBD86', // 
   logs: process.env.LOGS || '', 
   links: {
     support: process.env.SUPPORT || 'https://discord.gg/aromax-development-708565122188312579',

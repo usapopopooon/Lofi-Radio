@@ -30,4 +30,4 @@ require('node:http')
       `Developed by DIWAS ATREYA`,
     ),
   )
-  .listen(8080);
+  .listen(process.env.PORT || 8080);

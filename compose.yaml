@@ -1,0 +1,53 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      lavalink:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      TOKEN: ${TOKEN:?Set TOKEN to your Discord bot token}
+      PREFIX: ${PREFIX:-.}
+      OWNERID: ${OWNERID:-}
+      SPOTIFYID: ${SPOTIFYID:-}
+      SPOTIFYSECRET: ${SPOTIFYSECRET:-}
+      MONGO_URI: mongodb://mongo:27017/lofi-radio
+      COLOR: ${COLOR:-#DDBD86}
+      LOGS: ${LOGS:-}
+      SUPPORT: ${SUPPORT:-}
+      INVITE: ${INVITE:-}
+      VOTE: ${VOTE:-}
+      BG: ${BG:-}
+      NODE_URL: lavalink:2333
+      NODE_NAME: Main
+      NODE_AUTH: ${LAVALINK_PASSWORD:-youshallnotpass}
+      NODE_SECURE: "false"
+    ports:
+      - "8080:8080"
+
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  lavalink:
+    image: fredboat/lavalink:3.7.8
+    restart: unless-stopped
+    environment:
+      LAVALINK_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
+      _JAVA_OPTIONS: -Xmx512m
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+
+volumes:
+  mongo-data:

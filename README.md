@@ -67,6 +67,40 @@ To start your bot
 node src/index.js 
 ```
 
+## Coolify / Docker Compose
+
+The easiest deployment path is Docker Compose. This repository includes the bot,
+MongoDB, and Lavalink in `compose.yaml`.
+
+1. Create a new Docker Compose project in Coolify.
+2. Point it at this repository.
+3. Add at least this environment variable:
+
+```
+TOKEN=your_discord_bot_token
+```
+
+Optional variables:
+
+```
+OWNERID=123456789012345678
+SPOTIFYID=
+SPOTIFYSECRET=
+LAVALINK_PASSWORD=youshallnotpass
+```
+
+Coolify will build the bot image and start three services:
+
+- `bot`: Discord bot and small health HTTP server on port `8080`
+- `mongo`: persistent MongoDB storage
+- `lavalink`: local Lavalink audio node
+
+For local testing, copy `.env.example` to `.env`, fill `TOKEN`, then run:
+
+```
+docker compose up --build
+```
+
 For replit: Open Hidden Files => Goto `replit.nix` and copy these and paste in that file 
 
 [![Run on Repl.it](https://repl.it/badge/github/diwasatreya/Lofi-Radio)](https://repl.it/github/diwasatreya/Lofi-Radio)
