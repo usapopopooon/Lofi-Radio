@@ -1,7 +1,4 @@
-const { CommandInteraction, Client, MessageEmbed, Permissions, MessageActionRow } = require('discord.js');
-
-const { MessageButton} = require("discord.js");
-const { convertTime } = require('../../utils/convert.js');
+const { CommandInteraction, Client, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
 const db = require('../../schema/station.js');
 module.exports = {
   name: 'play',
@@ -47,48 +44,16 @@ module.exports = {
         ],
       });
 
-    const emojiaddsong = client.emoji.addsong;
-    const emojiplaylist = client.emoji.playlist;
-
-const fs = require('fs');
-
-
-    
     const ress = await db.findOne(client.getGuildQuery(interaction.guildId));
-
-  let  station;
-if(!ress) {
-  station = "default"
-}
-    
-    if (ress && ress.Radio) station = ress.Radio;
-let np;
-
-
-if(station == "default")
-{
-  const anim = require('../../songs/default.json');
-  np = anim.words[Math.floor((Math.random() * anim.words.length))];
-}
-
-    
-if(station == "Anime lo-fi")
-{
-  const anime = require('../../songs/anime.json');
-  np = anime.words[Math.floor((Math.random() * anime.words.length))];
-}
-
-    if(station == "Sleep lo-fi")
-{
-  const sleep = require('../../songs/sleep.json');
-  np = sleep.words[Math.floor((Math.random() * sleep.words.length))];
-}
-
-    if(station == "Study lo-fi")
-{
-  const study = require('../../songs/study.json');
- np = study.words[Math.floor((Math.random() * study.words.length))];
-}
+    const station = ress && ress.Radio ? ress.Radio : "default";
+    const stationFiles = {
+      default: require('../../songs/default.json'),
+      "Anime lo-fi": require('../../songs/anime.json'),
+      "Sleep lo-fi": require('../../songs/sleep.json'),
+      "Study lo-fi": require('../../songs/study.json'),
+    };
+    const stationSongs = stationFiles[station] || stationFiles.default;
+    const np = stationSongs.words[Math.floor(Math.random() * stationSongs.words.length)];
 
     let query = np;
 
@@ -102,10 +67,11 @@ if(station == "Anime lo-fi")
     const result = await player.search(query, { requester: interaction.user });
 
     if (!result.tracks.length) return interaction.editReply({ content: 'No result was found' });
-    const tracks = result.tracks;
-
-    if (result.type === "PLAYLIST") for (let track of result.tracks) player.queue.add(track);
-    else player.queue.add(result.tracks[0]);
+    if (result.type === "PLAYLIST") {
+      for (let track of result.tracks) player.queue.add(track);
+    } else {
+      player.queue.add(result.tracks[0]);
+    }
 
  const played = new MessageEmbed()
                     .setColor("#DDBD86")
@@ -117,23 +83,6 @@ if(station == "Anime lo-fi")
     .setURL(`https://discord.gg/aromax-development-708565122188312579`)
 	.setStyle(`LINK`).setDisabled(false)
 
-if (result.type === "PLAYLIST") {
-  
-  for (let track of result.tracks)
-    {
-      let words = ["1", "2", "3"];
-
-let word = words[Math.floor(Math.random() * words.length)];
-
-      player.queue.add(track[word]);
-      if(player){player.setLoop('queue');}
-      
-    }}
-  
-    else {
-      
-      player.queue.add(result.tracks[0]);
-    }
       if (!player.playing && !player.paused) player.play();
     await player.setLoop('queue');
     

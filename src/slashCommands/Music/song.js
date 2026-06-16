@@ -100,13 +100,12 @@ const Name = "Favourite";
     data = newData;
     }
 
-    let userData = await db.find(client.getUserQuery(interaction.user.id));
-    if (userData.length >= 10) {
+    if (Array.isArray(data.Playlist) && data.Playlist.length >= 10) {
       return interaction.editReply({
         embeds: [
           new MessageEmbed()
             .setColor(client.embedColor)
-            .setDescription(`You Can Only Create 10 Playlist`),
+            .setDescription(`You can only save 10 songs in your liked collection.`),
         ],
       });
     }

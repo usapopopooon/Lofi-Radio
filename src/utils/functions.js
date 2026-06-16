@@ -46,14 +46,20 @@ function neb(embed, player, client) {
  */
 async function autoplay(player, client) {
 
-    const searched = `https://www.youtube.com/watch?v=${player.data.get("autoplaySystem")}&list=RD${player.data.get("autoplaySystem")}`;
-    let requester = player.data.get("requester");
-    if (!searched[0]) {
-        return message.channel.send({ embeds: [new MessageEmbed().setColor(client.embedColor).setDescription(`Unable to autoplay from the previous track. Destroyed the player.`)] });
+    const autoplaySeed = player.data.get("autoplaySystem");
+    if (!autoplaySeed) {
+        client.logger.log(`Unable to autoplay in ${player.guildId}: no previous track seed.`, "error");
+        return player.destroy();
     }
+    const searched = `https://www.youtube.com/watch?v=${autoplaySeed}&list=RD${autoplaySeed}`;
+    let requester = player.data.get("requester");
     const { tracks } = await player.search(searched, { requester: requester });
-    await player.queue.add(tracks[1]);
-    await player.queue.add(tracks[2]);
+    const nextTracks = tracks.slice(1, 3).filter(Boolean);
+    if (!nextTracks.length) {
+        client.channels.cache.get(player.textId)?.send({ embeds: [new MessageEmbed().setColor(client.embedColor).setDescription(`Unable to autoplay from the previous track. Destroyed the player.`)] }).catch(() => {});
+        return player.destroy();
+    }
+    for (const track of nextTracks) player.queue.add(track);
     return player.play();
 }
 /**
@@ -150,7 +156,14 @@ async function trackStartEventHandler(msgId, channel, player, track, client) {
                 components: [row]
             });
 
-            return await db.findOneAndUpdate(client.getGuildQuery(channel.guildId), { Message: m.id, ClientId: client.user.id });
+            return await db.findOneAndUpdate(
+                client.getGuildQuery(channel.guildId),
+                {
+                    $set: { Message: m.id, ClientId: client.user.id },
+                    $setOnInsert: { Guild: channel.guildId, Channel: channel.id },
+                },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
         } else {
 
             let embed2 = new MessageEmbed().setColor(message.client.embedColor).setDescription(`[${track.title}](${track.uri}) - \`[ ${track.isStream ? '[**◉ LIVE**]' : convertTime(player.queue.current.length)} ]\``).setImage(icon).setFooter({ text: `Requested by ${player.queue.current.requester.tag}`, iconURL: player.queue.current.requester.displayAvatarURL({ dynamic: true }) });

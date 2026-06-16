@@ -11,7 +11,7 @@ module.exports = {
 
     if (player.data.get("autoplay")) {
       player.previous = player.data.get("autoplaySystem");
-      return autoplay(player);
+      return autoplay(player, client);
     }
     let guild = client.guilds.cache.get(player.guildId);
     if (!guild) return;

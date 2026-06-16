@@ -40,7 +40,7 @@ module.exports = {
       return interaction.editReply({ embeds: [thing] });
     }
     const volume = Number(vol);
-    if (!volume || volume < 0 || volume > 100) {
+    if (Number.isNaN(volume) || volume < 0 || volume > 100) {
       return await interaction
         .editReply({
           embeds: [

@@ -117,7 +117,7 @@ const b1 = new MessageButton().setLabel("Cancel Timer").setCustomId(`cancel`).se
         else {
           i.followUp({
             ephemeral: true,
-            content: `Only **${message.author.tag}** can use this button, if you want then you've to run the command again.`,
+            content: `Only **${interaction.user.tag}** can use this button, if you want then you've to run the command again.`,
           });
           return false;
         }
@@ -143,6 +143,20 @@ const b1 = new MessageButton().setLabel("Cancel Timer").setCustomId(`cancel`).se
       idle: 20000 / 2,
     });
 let tt;
+const scheduleDisconnect = (delayMs, noticeInteraction) => {
+  clearTimeout(tt);
+  tt = setTimeout(() => {
+    if (!interaction.member.voice.channel) {
+      noticeInteraction.followUp({
+        content: `**Sleep Timer Info:** \`${interaction.user.tag}\`, you are already disconnected from voice channel`,
+        ephemeral: true,
+      }).catch(() => {});
+    } else {
+      interaction.member.voice.disconnect().catch(() => {});
+    }
+    tt = null;
+  }, delayMs);
+};
       collectorr.on("collect", async i => {
 if (!i.deferred) i.deferUpdate();
         if (i.customId === `cancel`) {
@@ -151,7 +165,8 @@ if (!i.deferred) i.deferUpdate();
     components: [row4]
         });
 
-    clearInterval(tt);
+    clearTimeout(tt);
+    tt = null;
 
           
 }
@@ -183,23 +198,7 @@ if (options === 'half') {
                 <:blank:1120331253569302619><:mode:1119915805056966717> **${interaction.member} will be removed after \`30 minutes\`**
                 `)
   
-function intervalFunc() {
-  const player = client.manager.players.get(interaction.guild.id); 
-  
-  if(!interaction.member.voice.channel){
-        if (!m) return; 
-  i.followUp({
-          content: `**Sleep Timer Info:** \`${interaction.user.tag}\`, you are already disconnected from voice channel`
-        });
-  } else{
-    interaction.member.voice.disconnect();
-  }
-// player.destroy(interaction.guild.id);
-  clearInterval(tt);
-}
-
-
-    tt = setInterval(intervalFunc, 20000);
+    scheduleDisconnect(30 * 60 * 1000, i);
   
   
     if (!m) return; 
@@ -222,23 +221,7 @@ function intervalFunc() {
                 <:blank:1120331253569302619><:mode:1119915805056966717> **${interaction.member} will be removed after \`1 Hours\`**
                 `)
   
-function intervalFunc() {
-  const player = client.manager.players.get(interaction.guild.id); 
-  
-  if(!interaction.member.voice.channel){
-        if (!m) return; 
-  i.followUp({
-          content: `**Sleep Timer Info:** \`${interaction.user.tag}\`, you are already disconnected from voice channel`
-        });
-  } else{
-    interaction.member.voice.disconnect();
-  }
-// player.destroy(interaction.guild.id);
-  clearInterval(tt);
-}
-
- 
-    tt = setInterval(intervalFunc, 3600000);
+    scheduleDisconnect(60 * 60 * 1000, i);
   
   // clearInterval(tt);
     if (!m) return; 
@@ -260,23 +243,7 @@ function intervalFunc() {
                 <:blank:1120331253569302619><:mode:1119915805056966717> **${interaction.member} will be removed after \`1 Hour 30 minutes\`**
                 `)
   
-function intervalFunc() {
-  const player = client.manager.players.get(interaction.guild.id); 
-  
-  if(!interaction.member.voice.channel){
-        if (!m) return; 
-  i.followUp({
-          content: `**Sleep Timer Info:** \`${interaction.user.tag}\`, you are already disconnected from voice channel`
-        });
-  } else{
-    interaction.member.voice.disconnect();
-  }
-// player.destroy(interaction.guild.id);
-  clearInterval(tt);
-}
-
-
-   tt = setInterval(intervalFunc, 4680000);
+   scheduleDisconnect(90 * 60 * 1000, i);
 
   // clearInterval(tt);
     if (!m) return; 
@@ -298,23 +265,7 @@ function intervalFunc() {
                 <:blank:1120331253569302619><:mode:1119915805056966717> **${interaction.member} will be removed after \`2 Hours\`**
                 `)
   
-function intervalFunc() {
-  const player = client.manager.players.get(interaction.guild.id); 
-  
-  if(!interaction.member.voice.channel){
-        if (!m) return; 
-  i.followUp({
-          content: `**Sleep Timer Info:** \`${interaction.user.tag}\`, you are already disconnected from voice channel`
-        });
-  } else{
-    interaction.member.voice.disconnect();
-  }
-// player.destroy(interaction.guild.id);
-  clearInterval(tt);
-}
-
-
-     tt = setInterval(intervalFunc, 7200000);
+     scheduleDisconnect(2 * 60 * 60 * 1000, i);
   
   // clearInterval(tt);
     if (!m) return; 

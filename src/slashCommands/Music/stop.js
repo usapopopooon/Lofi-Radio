@@ -1,12 +1,11 @@
-const { MessageEmbed, CommandInteraction, Client } = require('discord.js');
-const db = require("../../schema/playlist");
+const { CommandInteraction, Client } = require('discord.js');
 module.exports = {
   name: 'stop',
   description: 'Leaves the voice channel',
   userPrams: [],
   botPrams: ['EMBED_LINKS'],
   dj: true,
-  player: false,
+  player: true,
   inVoiceChannel: true,
   sameVoiceChannel: true,
 
@@ -22,10 +21,13 @@ module.exports = {
     });
     
 
-    const emojiLeave = interaction.client.emoji.leave;
-
-
    const player = client.manager.players.get(interaction.guild.id); 
+if (!player) {
+  return interaction.editReply({ embeds: [{
+    color: '#DDBD86',
+    description: `There is no player for this guild.`
+  }]});
+}
 await player.destroy(interaction.guild.id);
 
 await interaction.followUp({ embeds: [{

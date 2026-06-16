@@ -71,7 +71,7 @@ if(mode == "Session"){
         else {
           i.followUp({
             ephemeral: true,
-            content: `Only **${message.author.tag}** can use this button, if you want then you've to run the command again.`,
+            content: `Only **${interaction.user.tag}** can use this button, if you want then you've to run the command again.`,
           });
           return false;
         }

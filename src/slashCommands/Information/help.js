@@ -134,38 +134,15 @@ const db = require('../../schema/station.js');
 
    
      const ress = await db.findOne(client.getGuildQuery(interaction.guildId));
-
-  let  station;
-if(!ress) {
-  station = "default"
-}
-      
-    if (ress && ress.Radio) station = ress.Radio;
-let np;
-
-if(station == "default")
-{
-  const anim = require('../../songs/default.json');
-  np = anim.words[Math.floor((Math.random() * anim.words.length))];
-}
-    
-if(station == "Anime lo-fi")
-{
-  const anime = require('../../songs/anime.json');
-  np = anime.words[Math.floor((Math.random() * anime.words.length))];
-}
-
-    if(station == "Sleep lo-fi")
-{
-  const sleep = require('../../songs/sleep.json');
-  np = sleep.words[Math.floor((Math.random() * sleep.words.length))];
-}
-
-    if(station == "Study lo-fi")
-{
-  const study = require('../../songs/study.json');
- np = study.words[Math.floor((Math.random() * study.words.length))];
-}
+     const station = ress && ress.Radio ? ress.Radio : "default";
+     const stationFiles = {
+       default: require('../../songs/default.json'),
+       "Anime lo-fi": require('../../songs/anime.json'),
+       "Sleep lo-fi": require('../../songs/sleep.json'),
+       "Study lo-fi": require('../../songs/study.json'),
+     };
+     const stationSongs = stationFiles[station] || stationFiles.default;
+     const np = stationSongs.words[Math.floor(Math.random() * stationSongs.words.length)];
 
     let query = np;
 
@@ -210,7 +187,7 @@ const player = client.manager.players.get(i.guild.id);
           .catch(() => { });
       }
         
-if(player.queue.current) {
+if(player && player.queue.current) {
 await player.destroy(interaction.guild.id);
 
 await i.followUp({ embeds: [{
@@ -218,11 +195,11 @@ await i.followUp({ embeds: [{
       description: `<:stop:1119915842893783052> Successfully disconnected from ${i.member.voice.channel}
  `
     }]})
-} if(player.queue.current == "undefined") {
+} else {
    return await i
           .followUp({ embeds: [{
       color: '#DDBD86',
-      description: `👋`
+      description: `There is no player for this guild.`
     }], ephemeral: true})
 }
       
