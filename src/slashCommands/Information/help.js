@@ -50,15 +50,11 @@ module.exports = {
 <:blank:1120331253569302619><:premium:1119915823964893214>  **/premium:** Shows information about Lofi Radio premium.
 <:info:1119915789030535178> **Info:**
 <:blank:1120331253569302619><:telegram:1119915847809515671> **/support:** Send us a message or [join](https://discord.gg/aromax-development-708565122188312579) our support server.
-<:blank:1120331253569302619><:like:1119915795565269112> **/vote:** Vote for Lofi Radio.
 <:blank:1120331253569302619><:invite:1119915791521955970> **/invite:** [Invite](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands) Lofi Radio to your server.
 `)
 
 const b1 = new MessageButton().setLabel(`Play`).setCustomId(`play`).setEmoji(`1119915811415539722`).setStyle('SECONDARY').setDisabled(false)
         const b2 = new MessageButton().setLabel(`Stop`).setCustomId(`stop`).setEmoji(`1119915842893783052`).setStyle('SECONDARY').setDisabled(false)
-        const b3 = new MessageButton().setLabel(`Vote`).setEmoji('1119915795565269112')
-    .setURL(`https://discord.gg/aromax-development-708565122188312579`)
-	.setStyle(`LINK`).setDisabled(false)
         const b4 = new MessageButton() .setLabel(`Invite`)
       .setEmoji('1119915791521955970')
    .setURL(`https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`)
@@ -68,9 +64,9 @@ const b1 = new MessageButton().setLabel(`Play`).setCustomId(`play`).setEmoji(`11
 const b5 = new MessageButton().setLabel(`Play`).setCustomId(`play`).setEmoji(`1119915811415539722`).setStyle('SECONDARY').setDisabled(true)
         const b6 = new MessageButton().setLabel(`Stop`).setCustomId(`stop`).setEmoji(`1119915842893783052`).setStyle('SECONDARY').setDisabled(true)
 
-    const drow = new MessageActionRow().addComponents(b5, b6, b3, b4);
+    const drow = new MessageActionRow().addComponents(b5, b6, b4);
 
-    const row = new MessageActionRow().addComponents(b1, b2, b3, b4);
+    const row = new MessageActionRow().addComponents(b1, b2, b4);
 
   let m =  await interaction.followUp({ embeds: [embed], components: [row] })
 
@@ -91,8 +87,7 @@ const b5 = new MessageButton().setLabel(`Play`).setCustomId(`play`).setEmoji(`11
   const played = new MessageEmbed()
                     .setColor("#DDBD86")
                     .setDescription(`
-<:notes:1119915814733217843> Successfully joined and bound to ${interaction.member.voice.channel}.
-<:blank:1120331253569302619><:dvd:1119915776732827778> **You can enable 24/7 mode by voting here.**`)
+<:notes:1119915814733217843> Successfully joined and bound to ${interaction.member.voice.channel}.`)
     
     collector.on('end', async () => {
       if (!m) return;
@@ -145,15 +140,10 @@ const db = require('../../schema/station.js');
      const result = await searchFirstResult(player, shuffle(stationSongs.words), interaction.user);
 
     if (!result || !result.tracks.length) return i.followUp({ content: 'No playable radio stream was found', ephemeral: true });
- const bb = new MessageButton().setLabel(`Vote for ${client.user.username}`).setEmoji('1119915795565269112')
-    .setURL(`https://discord.gg/aromax-development-708565122188312579`)
-	.setStyle(`LINK`).setDisabled(false)
-                
                       if (result.type === "PLAYLIST") for (let track of result.tracks) player.queue.add(track);
     else player.queue.add(result.tracks[0]);
 if (!player.playing && !player.paused) player.play();
-                const roww = new MessageActionRow().addComponents(bb);
-         await i.followUp({ embeds: [played], components: [roww]});
+         await i.followUp({ embeds: [played]});
               }
         }
 

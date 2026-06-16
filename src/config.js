@@ -15,7 +15,6 @@ module.exports = {
   links: {
     support: process.env.SUPPORT || 'https://discord.gg/aromax-development-708565122188312579',
     invite: process.env.INVITE || 'https://discord.gg/aromax-development-708565122188312579',
-    vote: process.env.VOTE || 'https://discord.gg/aromax-development-708565122188312579',
     bg: process.env.BG || 'https://media.discordapp.net/attachments/966675680907657256/967789748699668480/flat-landscape-lake-sunset-deer-wallpaper-preview.jpg'
   },
 

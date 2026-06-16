@@ -24,7 +24,6 @@ services:
       LOGS: ${LOGS:-}
       SUPPORT: ${SUPPORT:-}
       INVITE: ${INVITE:-}
-      VOTE: ${VOTE:-}
       BG: ${BG:-}
       NODE_URL: lavalink:${LAVALINK_PORT:-8080}
       NODE_NAME: Main
