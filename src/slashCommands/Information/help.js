@@ -142,16 +142,9 @@ const db = require('../../schema/station.js');
        "Study lo-fi": require('../../songs/study.json'),
      };
      const stationSongs = stationFiles[station] || stationFiles.default;
-     const np = stationSongs.words[Math.floor(Math.random() * stationSongs.words.length)];
+     const result = await searchFirstResult(player, shuffle(stationSongs.words), interaction.user);
 
-    let query = np;
-
- 
-
-    const result = await player.search(query, { requester: interaction.user });
-
-    if (!result.tracks.length) return interaction.editReply({ content: 'No result was found' });
-    const tracks = result.tracks;
+    if (!result || !result.tracks.length) return i.followUp({ content: 'No playable radio stream was found', ephemeral: true });
  const bb = new MessageButton().setLabel(`Vote for ${client.user.username}`).setEmoji('1119915795565269112')
     .setURL(`https://discord.gg/aromax-development-708565122188312579`)
 	.setStyle(`LINK`).setDisabled(false)
@@ -211,3 +204,20 @@ await i.followUp({ embeds: [{
     });
   },
 };
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+async function searchFirstResult(player, queries, requester) {
+  for (const query of queries) {
+    try {
+      const result = await player.search(query, { requester });
+      if (result && result.tracks && result.tracks.length) return result;
+    } catch (_) {
+      continue;
+    }
+  }
+
+  return null;
+}

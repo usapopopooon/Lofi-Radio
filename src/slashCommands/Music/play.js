@@ -53,9 +53,7 @@ module.exports = {
       "Study lo-fi": require('../../songs/study.json'),
     };
     const stationSongs = stationFiles[station] || stationFiles.default;
-    const np = stationSongs.words[Math.floor(Math.random() * stationSongs.words.length)];
-
-    let query = np;
+    const queries = shuffle(stationSongs.words);
 
     const player = await client.manager.createPlayer({
       guildId: interaction.guildId,
@@ -64,9 +62,9 @@ module.exports = {
       deaf: true,
     });
 
-    const result = await player.search(query, { requester: interaction.user });
+    const result = await searchFirstResult(player, queries, interaction.user);
 
-    if (!result.tracks.length) return interaction.editReply({ content: 'No result was found' });
+    if (!result || !result.tracks.length) return interaction.editReply({ content: 'No playable radio stream was found' });
     if (result.type === "PLAYLIST") {
       for (let track of result.tracks) player.queue.add(track);
     } else {
@@ -100,3 +98,20 @@ module.exports = {
     
   },
 };
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+async function searchFirstResult(player, queries, requester) {
+  for (const query of queries) {
+    try {
+      const result = await player.search(query, { requester });
+      if (result && result.tracks && result.tracks.length) return result;
+    } catch (_) {
+      continue;
+    }
+  }
+
+  return null;
+}
