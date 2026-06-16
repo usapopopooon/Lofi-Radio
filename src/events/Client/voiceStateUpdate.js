@@ -17,15 +17,21 @@ module.exports = {
         let guildId = newState.guild.id;
         const player = client.manager.players.get(guildId);
         if (!player) return;
-        
-        const botMember = newState.guild.members.me;
-        if (!botMember || !botMember.voice.channelId) {
+
+        if (newState.id === client.user.id || oldState.id === client.user.id) {
+            client.logger.log(
+                `[VOICE] Bot voice state in guild ${guildId}: ${oldState.channelId || "none"} -> ${newState.channelId || "none"}`,
+                "log",
+            );
+        }
+
+        if (oldState.id === client.user.id && oldState.channelId && !newState.channelId) {
             const text = player?.textId;
             await player.destroy(player.guildId);
             let emb = new MessageEmbed()
                 .setColor(client.embedColor)
                 .setDescription("I've been Disconnected")
-            client.channels.cache.get(text).send({ embeds: [emb] }).then(msg => { setTimeout(() => { msg.delete() }, 5000) });
+            client.channels.cache.get(text)?.send({ embeds: [emb] }).then(msg => { setTimeout(() => { msg.delete() }, 5000) });
 
         }
     }

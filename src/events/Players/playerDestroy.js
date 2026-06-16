@@ -8,7 +8,7 @@ module.exports = {
 
         let name = client.guilds.cache.get(player.guildId).name;
 
-        client.logger.log(`Player Destroy in ${name} [ ${player.guildId} ]`, "log");
+        client.logger.log(`Player Destroy in ${name} [ ${player.guildId} ]; playing=${player.playing}; paused=${player.paused}; state=${player.state || "unknown"}`, "log");
 
         if (player.data.get('message') && player.data.get('message').deletable ) player.data.get('message').delete().catch(() => null);
 
