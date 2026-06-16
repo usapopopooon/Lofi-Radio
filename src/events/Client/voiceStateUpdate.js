@@ -18,7 +18,8 @@ module.exports = {
         const player = client.manager.players.get(guildId);
         if (!player) return;
         
-        if (!newState.guild.members.cache.get(client.user.id).voice.channelId) {
+        const botMember = newState.guild.members.me;
+        if (!botMember || !botMember.voice.channelId) {
             const text = player?.textId;
             await player.destroy(player.guildId);
             let emb = new MessageEmbed()
