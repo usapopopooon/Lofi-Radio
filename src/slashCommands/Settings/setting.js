@@ -19,10 +19,10 @@ module.exports = {
 
     let station;
     let mode;
-const ress = await db1.findOne({ Guild: interaction.guildId });
+const ress = await db1.findOne(client.getGuildQuery(interaction.guildId));
     if (ress && ress.Radio) station = ress.Radio;
 
-const res = await db2.findOne({ Guild: interaction.guildId });
+const res = await db2.findOne(client.getGuildQuery(interaction.guildId));
     if (res && res.mode) mode = res.mode;
 
 

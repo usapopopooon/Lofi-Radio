@@ -22,7 +22,7 @@ module.exports = {
         ephemeral: false,
        });
   let station = "Lofi Radio (Default)"
-const ress = await db1.findOne({ Guild: interaction.guildId });
+const ress = await db1.findOne(client.getGuildQuery(interaction.guildId));
  if(ress) station = ress.Radio;
       
             let thing = new MessageEmbed()
@@ -129,11 +129,10 @@ if (options === 'anime') {
           embeds: [ani]
         });
     } else {
-      const newData = new db1({
-        Guild: interaction.guildId,
+      const newData = new db1(client.getGuildCreateData(interaction.guildId, {
         Radio: "Anime lo-fi",
         oldradio: station
-      });
+      }));
            if (!m) return; 
   m.edit({
           embeds: [ani]
@@ -167,11 +166,10 @@ if (options === 'anime') {
           embeds: [slp]
         });
     } else {
-      const newData = new db1({
-        Guild: interaction.guildId,
+      const newData = new db1(client.getGuildCreateData(interaction.guildId, {
         Radio: "Sleep lo-fi",
         oldradio: station
-      });
+      }));
            if (!m) return; 
   m.edit({
           embeds: [slp]
@@ -196,11 +194,10 @@ if (options === 'anime') {
           embeds: [sty]
         });
     } else {
-      const newData = new db1({
-        Guild: interaction.guildId,
+      const newData = new db1(client.getGuildCreateData(interaction.guildId, {
         Radio: "Study lo-fi",
         oldradio: station
-      });
+      }));
            if (!m) return; 
   m.edit({
           embeds: [sty]

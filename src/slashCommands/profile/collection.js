@@ -21,7 +21,7 @@ module.exports = {
     await interaction.deferReply({});
 
     const Name = "Favourite";
-    const data = await db.findOne({ UserId: interaction.member.user.id, PlaylistName: Name });
+    const data = await db.findOne(client.getUserQuery(interaction.member.user.id, { PlaylistName: Name }));
 
     if (!data) {
       return interaction.editReply({
@@ -106,5 +106,4 @@ module.exports = {
     }
   },
 };
-
 

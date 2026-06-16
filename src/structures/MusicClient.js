@@ -5,9 +5,12 @@ const { readdirSync } = require("fs");
 const shoukakuOptions = require("../utils/options");
 const { Connectors } = require("shoukaku");
 const Spotify = require("kazagumo-spotify")
+const baseConfig = require("../config.js");
 
 class MusicBot extends Client {
-  constructor() {
+  static mongodbConnection;
+
+  constructor(options = {}) {
     super({
       shards: "auto",
       allowedMentions: {
@@ -21,9 +24,11 @@ class MusicBot extends Client {
         Intents.FLAGS.GUILD_VOICE_STATES
       ]
     });
+    this.botIndex = options.botIndex || 1;
+    this.multiBot = Boolean(options.multiBot);
     this.commands = new Collection();
     this.slashCommands = new Collection();
-    this.config = require("../config.js");
+    this.config = { ...baseConfig, token: options.token || baseConfig.token };
     this.owner = this.config.ownerID;
     this.prefix = this.config.prefix;
     this.embedColor = this.config.embedColor;
@@ -31,7 +36,7 @@ class MusicBot extends Client {
     this.logger = require("../utils/logger.js");
     this.emoji = require("../utils/emoji.json");
     this.anime = require("../songs/anime.json")
-    if (!this.token) this.token = this.config.token;
+    this.token = this.config.token;
     this.manager
     this._connectMongodb();
   }
@@ -67,7 +72,44 @@ class MusicBot extends Client {
         if (guild) guild.shard.send(payload);
       }
     }, new Connectors.DiscordJS(this), this.config.nodes, shoukakuOptions);
-    return this.Kazagumo;
+    return this.manager;
+  }
+
+  getGuildQuery(guildId) {
+    const clientId = this.user?.id;
+    const query = {};
+    if (guildId) query.Guild = guildId;
+    if (!clientId) return query;
+    if (this.multiBot && this.botIndex > 1) return { ...query, ClientId: clientId };
+    return { ...query, $or: [{ ClientId: clientId }, { ClientId: { $exists: false } }] };
+  }
+
+  getGuildCreateData(guildId, data = {}) {
+    return {
+      ClientId: this.user?.id,
+      Guild: guildId,
+      ...data,
+    };
+  }
+
+  getUserQuery(userId, data = {}) {
+    const clientId = this.user?.id;
+    const query = { UserId: userId, ...data };
+    if (!clientId) return query;
+    if (this.multiBot && this.botIndex > 1) return { ...query, ClientId: clientId };
+    return { ...query, $or: [{ ClientId: clientId }, { ClientId: { $exists: false } }] };
+  }
+
+  getUserCreateData(userId, data = {}) {
+    return {
+      ClientId: this.user?.id,
+      UserId: userId,
+      ...data,
+    };
+  }
+
+  getAutoReconnectQuery(guildId) {
+    return this.getGuildQuery(guildId);
   }
 
 
@@ -134,6 +176,12 @@ console.clear()
     });
   }
   async _connectMongodb() {
+    if (MusicBot.mongodbConnection) return MusicBot.mongodbConnection;
+    if (!this.config.mongourl) {
+      this.logger.log("[DB] MONGO_URI is not set", "error");
+      return null;
+    }
+
     const dbOptions = {
       useNewUrlParser: true,
       autoIndex: false,
@@ -142,7 +190,7 @@ console.clear()
       useUnifiedTopology: true,
     };
     mongoose.set('strictQuery', true);
-    mongoose.connect(this.config.mongourl, dbOptions);
+    MusicBot.mongodbConnection = mongoose.connect(this.config.mongourl, dbOptions);
     mongoose.Promise = global.Promise;
     mongoose.connection.on("connected", () => {
       this.logger.log("[DB] DATABASE CONNECTED", "ready");
@@ -153,8 +201,10 @@ console.clear()
     mongoose.connection.on("disconnected", () => {
       this.logger.log("[DB]Mongoose disconnected", "error");
     });
+    return MusicBot.mongodbConnection;
   }
   connect() {
+    if (!this.token) throw new Error(`Missing Discord bot token for bot #${this.botIndex}`);
     return super.login(this.token);
   };
 };

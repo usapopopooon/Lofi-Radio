@@ -23,14 +23,14 @@ module.exports = {
         ephemeral: false,
        });
   let mode = "None"
-const ress = await db2.findOne({ Guild: interaction.guildId });
+const ress = await db2.findOne(client.getGuildQuery(interaction.guildId));
     if (ress && ress.mode) mode = ress.mode;
 
 
 
  const player = client.manager.players.get(interaction.guild.id);
 
-        let data = await db.findOne({Guild: interaction.guild.id})
+        let data = await db.findOne(client.getAutoReconnectQuery(interaction.guild.id))
       
       
             let thing = new MessageEmbed()
@@ -110,11 +110,10 @@ collector.on('end', async () => {
            
             interaction.editReply({ embeds: [slp], components:[row4] })
         } else {
-            data = new db({
-                Guild: player.guildId,
+            data = new db(client.getGuildCreateData(player.guildId, {
                 TextId: player.textId,
                 VoiceId: player.voiceId
-            })
+            }))
             await data.save();
             interaction.editReply({ embeds: [slp], components:[row4] })
         }
@@ -126,11 +125,10 @@ collector.on('end', async () => {
       await ress.save()
              
     } else {
-      const newData = new db2({
-        Guild: interaction.guildId,
+      const newData = new db2(client.getGuildCreateData(interaction.guildId, {
         mode: "24/7",
         oldmode: mode
-      });
+      }));
       await newData.save()
       
     }
@@ -154,8 +152,8 @@ collector.on('end', async () => {
 interaction.editReply({ embeds: [slp], components:[row4] })
       player.data.set("autoplay", !player.data.get("autoplay"));
         player.data.set("requester", interaction.user);
-          let data = await db.findOne({Guild: interaction.guild.id})
-            await data.delete();
+          let data = await db.findOne(client.getAutoReconnectQuery(interaction.guild.id))
+            if (data) await data.delete();
           
                if (ress) {
       ress.oldmode = mode;
@@ -163,11 +161,10 @@ interaction.editReply({ embeds: [slp], components:[row4] })
       await ress.save()
              
     } else {
-      const newData = new db2({
-        Guild: interaction.guildId,
+      const newData = new db2(client.getGuildCreateData(interaction.guildId, {
         mode: "Auto Play",
         oldmode: mode
-      });
+      }));
       await newData.save()
       
     }
@@ -189,8 +186,8 @@ interaction.editReply({ embeds: [slp], components:[row4] })
    } else {
 
 interaction.editReply({ embeds: [slp], components:[row4] })
-          let data = await db.findOne({Guild: interaction.guild.id})
-            await data.delete();
+          let data = await db.findOne(client.getAutoReconnectQuery(interaction.guild.id))
+            if (data) await data.delete();
           
                if (ress) {
       ress.oldmode = mode;
@@ -198,11 +195,10 @@ interaction.editReply({ embeds: [slp], components:[row4] })
       await ress.save()
              
     } else {
-      const newData = new db2({
-        Guild: interaction.guildId,
+      const newData = new db2(client.getGuildCreateData(interaction.guildId, {
         mode: "Session",
         oldmode: mode
-      });
+      }));
       await newData.save()
       
     }

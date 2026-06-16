@@ -68,7 +68,7 @@ module.exports = {
         }
       }
       if (SlashCommands.dj) {
-        let data = await db2.findOne({ Guild: interaction.guildId })
+        let data = await db2.findOne(client.getGuildQuery(interaction.guildId))
         let perm = Permissions.FLAGS.MANAGE_GUILD;
         if (data) {
           if (data.Mode) {
@@ -111,10 +111,9 @@ module.exports = {
       }
     }
     if (interaction.isButton()) {
-      let data = await db.findOne({ Guild: interaction.guildId });
+      let data = await db.findOne(client.getGuildQuery(interaction.guildId));
       if (data && interaction.channelId === data.Channel && interaction.message.id === data.Message) return client.emit("playerButtons", interaction, data);
     };
   }
 };
-
 

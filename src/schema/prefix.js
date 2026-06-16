@@ -2,6 +2,7 @@ const { Schema, model} = require('mongoose');
 
 let Prefix = new Schema({
     Guild : String,
+    ClientId: String,
     Prefix : String, 
     oldPrefix: String,
 })

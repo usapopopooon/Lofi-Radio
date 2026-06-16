@@ -5,6 +5,10 @@ let Dj = new Schema({
         type: String,
         required: true
     },
+    ClientId : {
+        type: String,
+        required: false
+    },
     Roles : {
         type: Array,
         default: null

@@ -88,20 +88,19 @@ const filter = i => {
 
  if (i.customId === `like`) {
 const Name = "Favourite";
-   const data = await db.find({ UserId: interaction.member.user.id, PlaylistName: Name });
-     if (data.length <= 0) {
-     const newData = new db({
+   let data = await db.findOne(client.getUserQuery(interaction.member.user.id, { PlaylistName: Name }));
+     if (!data) {
+     const newData = new db(client.getUserCreateData(interaction.user.id, {
       UserName: interaction.user.tag,
-      UserId: interaction.user.id,
       PlaylistName: Name,
+      Playlist: [],
       CreatedOn: Math.round(Date.now() / 1000),
-    });
+    }));
     await newData.save();
+    data = newData;
     }
 
-    let userData = db.find({
-      UserId: interaction.user.id,
-    });
+    let userData = await db.find(client.getUserQuery(interaction.user.id));
     if (userData.length >= 10) {
       return interaction.editReply({
         embeds: [
@@ -123,10 +122,7 @@ const Name = "Favourite";
       duration: song.length,
     });
     await db.updateOne(
-      {
-        UserId: interaction.user.id,
-        PlaylistName: Name,
-      },
+      client.getUserQuery(interaction.user.id, { PlaylistName: Name }),
       {
         $push: {
           Playlist: {

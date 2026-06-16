@@ -54,7 +54,7 @@ const fs = require('fs');
 
 
     
-    const ress = await db.findOne({ Guild: interaction.guildId });
+    const ress = await db.findOne(client.getGuildQuery(interaction.guildId));
 
   let  station;
 if(!ress) {

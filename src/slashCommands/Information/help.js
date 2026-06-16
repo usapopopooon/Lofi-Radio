@@ -133,7 +133,7 @@ const db = require('../../schema/station.js');
 
 
    
-     const ress = await db.findOne({ Guild: interaction.guildId });
+     const ress = await db.findOne(client.getGuildQuery(interaction.guildId));
 
   let  station;
 if(!ress) {

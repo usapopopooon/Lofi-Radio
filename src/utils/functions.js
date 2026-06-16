@@ -68,7 +68,7 @@ async function playerhandler(query, player, message) {
     let m;
     const emojiaddsong = message.client.emoji.addsong;
     const emojiplaylist = message.client.emoji.playlist;
-    let d = await db.findOne({ Guild: message.guildId });
+    let d = await db.findOne(message.client.getGuildQuery(message.guildId));
     let n = new MessageEmbed().setColor(message.client.embedColor);
 
     try {
@@ -150,7 +150,7 @@ async function trackStartEventHandler(msgId, channel, player, track, client) {
                 components: [row]
             });
 
-            return await db.findOneAndUpdate({ Guild: channel.guildId }, { Message: m.id });
+            return await db.findOneAndUpdate(client.getGuildQuery(channel.guildId), { Message: m.id, ClientId: client.user.id });
         } else {
 
             let embed2 = new MessageEmbed().setColor(message.client.embedColor).setDescription(`[${track.title}](${track.uri}) - \`[ ${track.isStream ? '[**◉ LIVE**]' : convertTime(player.queue.current.length)} ]\``).setImage(icon).setFooter({ text: `Requested by ${player.queue.current.requester.tag}`, iconURL: player.queue.current.requester.displayAvatarURL({ dynamic: true }) });

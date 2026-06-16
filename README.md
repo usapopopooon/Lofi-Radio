@@ -74,10 +74,17 @@ MongoDB, and Lavalink in `compose.yaml`.
 
 1. Create a new Docker Compose project in Coolify.
 2. Point it at this repository.
-3. Add at least this environment variable:
+3. Add at least this environment variable for one bot:
 
 ```
 TOKEN=your_discord_bot_token
+```
+
+For multiple bots in one process, leave `TOKEN` empty and use comma-separated
+tokens:
+
+```
+TOKENS=first_discord_bot_token,second_discord_bot_token
 ```
 
 Optional variables:

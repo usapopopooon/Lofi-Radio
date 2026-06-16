@@ -10,7 +10,9 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
-      TOKEN: ${TOKEN:?Set TOKEN to your Discord bot token}
+      TOKEN: ${TOKEN:-}
+      TOKENS: ${TOKENS:-}
+      BOT_TOKENS: ${BOT_TOKENS:-}
       PREFIX: ${PREFIX:-.}
       OWNERID: ${OWNERID:-}
       SPOTIFYID: ${SPOTIFYID:-}

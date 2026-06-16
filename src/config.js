@@ -1,7 +1,10 @@
 require("dotenv").config();
 
+const tokens = parseTokens(process.env.TOKENS, process.env.BOT_TOKENS, process.env.TOKEN);
+
 module.exports = {
-  token: process.env.TOKEN || '', 
+  token: tokens[0] || '', 
+  tokens,
   prefix: process.env.PREFIX || '.', 
   ownerID: process.env.OWNERID ? process.env.OWNERID.split(',') : ['519666024220721152','965503342249914408'], 
   SpotifyID: process.env.SPOTIFYID || '', 
@@ -37,4 +40,15 @@ function parseBoolean(value){
         default:
             return false;
     }
+}
+
+function parseTokens(...values) {
+    for (const value of values) {
+        const tokens = String(value || "")
+        .split(/[\n,]+/)
+        .map((token) => token.trim())
+        .filter(Boolean);
+        if (tokens.length) return tokens;
+    }
+    return [];
 }

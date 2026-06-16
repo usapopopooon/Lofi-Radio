@@ -5,6 +5,10 @@ let autoReconnect = new Schema({
         type: String,
         required: true
     },
+    ClientId : {
+        type: String,
+        required: false
+    },
     TextId : {
         type: String,
         required: true

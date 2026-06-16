@@ -35,7 +35,7 @@ module.exports = {
             ephemeral: false
         });
 
-        let data = await db.findOne({ Guild: interaction.guildId });
+        let data = await db.findOne(client.getGuildQuery(interaction.guildId));
         const input = interaction.options.getString('toggledj')
 
         if (!data) return interaction.editReply({ embeds: [new MessageEmbed().setDescription(`<:dj:1119915773742288917>  Don't have any dj role(s) setuped.`).setColor(client.embedColor)] })

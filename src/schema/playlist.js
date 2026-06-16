@@ -9,6 +9,10 @@ const Playlist = new Schema({
         type: String,
         required: true
     },
+    ClientId: {
+        type: String,
+        required: false
+    },
     PlaylistName: {
         type: String,
         required: true

@@ -16,7 +16,7 @@ module.exports = {
 
         let guild = client.guilds.cache.get(player.guildId);
         if (!guild) return;
-        const data = await db.findOne({ Guild: guild.id });
+        const data = await db.findOne(client.getGuildQuery(guild.id));
         if (!data) return;
 
         let channel = guild.channels.cache.get(data.Channel);
@@ -47,7 +47,7 @@ module.exports = {
             embeds: [embed1],
             components: [row]
         });
-        const vc = await db2.findOne({Guild: player.guildId})
+        const vc = await db2.findOne(client.getAutoReconnectQuery(player.guildId))
         if(vc) await client.manager.createPlayer({
             guildId: vc.Guild,
             voiceId: vc.VoiceId,

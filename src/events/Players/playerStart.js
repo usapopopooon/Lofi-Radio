@@ -22,7 +22,7 @@ module.exports = {
 		let channel = guild.channels.cache.get(player.textId);
 		if (!channel) return;
 		
-		let data = await db.findOne({ Guild: guild.id });
+		let data = await db.findOne(client.getGuildQuery(guild.id));
 
 		if (data && data.Channel) {
 			let textChannel = guild.channels.cache.get(data.Channel);

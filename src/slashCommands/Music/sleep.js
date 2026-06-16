@@ -23,7 +23,7 @@ module.exports = {
         ephemeral: false,
        });
   let station = "Lofi Radio (Default)"
-const ress = await db1.findOne({ Guild: interaction.guildId });
+const ress = await db1.findOne(client.getGuildQuery(interaction.guildId));
     if (ress && ress.Radio) station = ress.Radio;
       
             let thing = new MessageEmbed()

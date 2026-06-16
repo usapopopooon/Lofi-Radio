@@ -17,7 +17,7 @@ module.exports = {
             ephemeral: false
         });
 
-        let data = await db.findOne({ Guild: interaction.guildId });
+        let data = await db.findOne(client.getGuildQuery(interaction.guildId));
         if (data) {
 
 const thing = new MessageEmbed()
