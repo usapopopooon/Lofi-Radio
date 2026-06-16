@@ -16,7 +16,7 @@ lavalink:
     bufferDurationMs: 400
     frameBufferDurationMs: 5000
     youtubePlaylistLoadLimit: 6
-    playerUpdateInterval: 5
+    playerUpdateInterval: 1
     youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true

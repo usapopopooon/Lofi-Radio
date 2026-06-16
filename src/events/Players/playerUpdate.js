@@ -9,7 +9,7 @@ module.exports = {
        player.data.set("lastPlaybackUpdateLog", now);
        client.logger.log(
         `[PLAYBACK] Player update in guild ${player.guildId}; position=${player.position}; playing=${player.playing}; paused=${player.paused}; state=${player.state || "unknown"}`,
-        "debug",
+        "log",
        );
     }
 };
