@@ -2,6 +2,7 @@ services:
   bot:
     build: .
     restart: unless-stopped
+    mem_limit: ${BOT_MEMORY_LIMIT:-256m}
     depends_on:
       mongo:
         condition: service_healthy
@@ -35,6 +36,7 @@ services:
   mongo:
     image: mongo:6
     restart: unless-stopped
+    mem_limit: ${MONGO_MEMORY_LIMIT:-256m}
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -46,9 +48,10 @@ services:
   lavalink:
     image: fredboat/lavalink:3.7.8
     restart: unless-stopped
+    mem_limit: ${LAVALINK_MEMORY_LIMIT:-512m}
     environment:
       LAVALINK_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
-      _JAVA_OPTIONS: -Xmx512m
+      _JAVA_OPTIONS: ${LAVALINK_JAVA_OPTIONS:--Xmx384m}
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
 
