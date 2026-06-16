@@ -28,8 +28,8 @@ services:
       NODE_NAME: Main
       NODE_AUTH: ${LAVALINK_PASSWORD:-youshallnotpass}
       NODE_SECURE: "false"
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
 
   mongo:
     image: mongo:6
