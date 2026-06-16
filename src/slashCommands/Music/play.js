@@ -1,5 +1,7 @@
-const { CommandInteraction, Client, MessageEmbed, Permissions, MessageActionRow, MessageButton } = require('discord.js');
+const { CommandInteraction, Client, MessageEmbed, Permissions } = require('discord.js');
 const db = require('../../schema/station.js');
+const DEFAULT_VOLUME = getDefaultVolume();
+
 module.exports = {
   name: 'play',
   description: 'Joins your voice channel and starts playing 24/7',
@@ -76,7 +78,8 @@ module.exports = {
                     .setDescription(`
 <:notes:1119915814733217843> Successfully joined and bound to ${interaction.member.voice.channel}.`)
 
-      if (!player.playing && !player.paused) player.play();
+    await player.setVolume(DEFAULT_VOLUME);
+    if (!player.playing && !player.paused) await player.play();
     await player.setLoop('queue');
 
     await interaction.followUp({ embeds: [played] });
@@ -89,6 +92,12 @@ module.exports = {
 
 function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
+}
+
+function getDefaultVolume() {
+  const volume = Number(process.env.DEFAULT_VOLUME || 65);
+  if (!Number.isFinite(volume)) return 65;
+  return Math.min(100, Math.max(1, volume));
 }
 
 async function searchFirstResult(player, queries, requester) {

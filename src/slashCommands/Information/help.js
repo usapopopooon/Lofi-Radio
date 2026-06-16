@@ -1,6 +1,7 @@
 const { MessageEmbed, MessageActionRow, MessageSelectMenu, CommandInteraction, Client } = require('discord.js');
 
 const { MessageButton} = require("discord.js");
+const DEFAULT_VOLUME = getDefaultVolume();
 
 module.exports = {
   name: 'help',
@@ -142,7 +143,8 @@ const db = require('../../schema/station.js');
     if (!result || !result.tracks.length) return i.followUp({ content: 'No playable radio stream was found', ephemeral: true });
                       if (result.type === "PLAYLIST") for (let track of result.tracks) player.queue.add(track);
     else player.queue.add(result.tracks[0]);
-if (!player.playing && !player.paused) player.play();
+await player.setVolume(DEFAULT_VOLUME);
+if (!player.playing && !player.paused) await player.play();
          await i.followUp({ embeds: [played]});
               }
         }
@@ -197,6 +199,12 @@ await i.followUp({ embeds: [{
 
 function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
+}
+
+function getDefaultVolume() {
+  const volume = Number(process.env.DEFAULT_VOLUME || 65);
+  if (!Number.isFinite(volume)) return 65;
+  return Math.min(100, Math.max(1, volume));
 }
 
 async function searchFirstResult(player, queries, requester) {

@@ -18,6 +18,10 @@ module.exports = {
 
 		let guild = client.guilds.cache.get(player.guildId);
 		if (!guild) return;
+		client.logger.log(
+			`Player started in ${guild.name} [${player.guildId}]: ${track.title} (stream=${track.isStream ? "yes" : "no"}, volume=${player.volume})`,
+			"ready",
+		);
 
 		let channel = guild.channels.cache.get(player.textId);
 		if (!channel) return;

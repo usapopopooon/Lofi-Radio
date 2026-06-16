@@ -21,6 +21,7 @@ services:
       MONGO_URI: mongodb://mongo:27017/lofi-radio
       COLOR: ${COLOR:-#DDBD86}
       PRESENCE_STATUS: ${PRESENCE_STATUS:-online}
+      DEFAULT_VOLUME: ${DEFAULT_VOLUME:-65}
       LOGS: ${LOGS:-}
       SUPPORT: ${SUPPORT:-}
       INVITE: ${INVITE:-}
