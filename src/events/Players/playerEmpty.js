@@ -6,6 +6,7 @@ const { autoplay } = require("../../utils/functions");
 module.exports = {
   name: 'playerEmpty',
   run: async (client, player) => {
+    client.logger.log(`[PLAYBACK] Player queue empty in guild ${player.guildId}; autoplay=${Boolean(player.data.get("autoplay"))}`, "warn");
 
     if (player.data.get('message') && player.data.get('message').deletable) player.data.get('message').delete().catch(() => null);
 

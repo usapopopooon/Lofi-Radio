@@ -4,6 +4,7 @@ const db = require("../../schema/setup");
 module.exports = {
 	name: "playerEnd",
 	run: async (client, player) => {
+		client.logger.log(`[PLAYBACK] Player ended in guild ${player.guildId}; queue=${getQueueSize(player)}`, "log");
 		
 		if (player.data.get("message") && player.data.get("message").deletable ) player.data.get("message").delete().catch(() => null);
 		
@@ -27,3 +28,10 @@ module.exports = {
 
 	}
 };
+
+function getQueueSize(player) {
+	if (typeof player.queue?.size === "number") return player.queue.size;
+	if (typeof player.queue?.length === "number") return player.queue.length;
+	if (Array.isArray(player.queue)) return player.queue.length;
+	return "unknown";
+}

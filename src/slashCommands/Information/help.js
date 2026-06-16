@@ -138,13 +138,30 @@ const db = require('../../schema/station.js');
        "Study lo-fi": require('../../songs/study.json'),
      };
      const stationSongs = stationFiles[station] || stationFiles.default;
-     const result = await searchFirstResult(player, shuffle(stationSongs.words), interaction.user);
+     const queries = shuffle(stationSongs.words);
+     client.logger.log(
+      `[PLAYBACK] Help play requested in guild ${interaction.guildId}, voice ${interaction.member.voice.channelId}, station ${station}, candidates ${queries.length}`,
+      "log",
+     );
+     const result = await searchFirstResult(client, player, queries, interaction.user);
 
-    if (!result || !result.tracks.length) return i.followUp({ content: 'No playable radio stream was found', ephemeral: true });
+    if (!result || !result.tracks.length) {
+      client.logger.log(`[PLAYBACK] No playable stream found from help button for guild ${interaction.guildId}`, "warn");
+      return i.followUp({ content: 'No playable radio stream was found', ephemeral: true });
+    }
                       if (result.type === "PLAYLIST") for (let track of result.tracks) player.queue.add(track);
     else player.queue.add(result.tracks[0]);
+client.logger.log(
+  `[PLAYBACK] Queued ${result.tracks.length} track(s) from help button for guild ${interaction.guildId}; selected "${result.tracks[0]?.title}" from ${result.tracks[0]?.uri}`,
+  "log",
+);
 await player.setVolume(DEFAULT_VOLUME);
+client.logger.log(`[PLAYBACK] Volume set to ${DEFAULT_VOLUME} from help button for guild ${interaction.guildId}`, "log");
 if (!player.playing && !player.paused) await player.play();
+client.logger.log(
+  `[PLAYBACK] Play invoked from help button for guild ${interaction.guildId}; playing=${player.playing}, paused=${player.paused}, queue=${getQueueSize(player)}`,
+  "log",
+);
          await i.followUp({ embeds: [played]});
               }
         }
@@ -207,12 +224,23 @@ function getDefaultVolume() {
   return Math.min(100, Math.max(1, volume));
 }
 
-async function searchFirstResult(player, queries, requester) {
+function getQueueSize(player) {
+  if (typeof player.queue?.size === "number") return player.queue.size;
+  if (typeof player.queue?.length === "number") return player.queue.length;
+  if (Array.isArray(player.queue)) return player.queue.length;
+  return "unknown";
+}
+
+async function searchFirstResult(client, player, queries, requester) {
   for (const query of queries) {
     try {
+      client.logger.log(`[PLAYBACK] Searching stream candidate: ${query}`, "log");
       const result = await player.search(query, { requester });
-      if (result && result.tracks && result.tracks.length) return result;
-    } catch (_) {
+      const trackCount = result?.tracks?.length || 0;
+      client.logger.log(`[PLAYBACK] Search result type=${result?.type || "unknown"} tracks=${trackCount} for ${query}`, "log");
+      if (trackCount) return result;
+    } catch (error) {
+      client.logger.log(`[PLAYBACK] Search failed for ${query}: ${error.message}`, "error");
       continue;
     }
   }

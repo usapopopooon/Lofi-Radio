@@ -56,6 +56,10 @@ module.exports = {
     };
     const stationSongs = stationFiles[station] || stationFiles.default;
     const queries = shuffle(stationSongs.words);
+    client.logger.log(
+      `[PLAYBACK] /play requested in guild ${interaction.guildId}, voice ${interaction.member.voice.channelId}, station ${station}, candidates ${queries.length}`,
+      "log",
+    );
 
     const player = await client.manager.createPlayer({
       guildId: interaction.guildId,
@@ -63,15 +67,23 @@ module.exports = {
       textId: interaction.channelId,
       deaf: true,
     });
+    client.logger.log(`[PLAYBACK] Player ready for guild ${interaction.guildId}, text ${interaction.channelId}`, "log");
 
-    const result = await searchFirstResult(player, queries, interaction.user);
+    const result = await searchFirstResult(client, player, queries, interaction.user);
 
-    if (!result || !result.tracks.length) return interaction.editReply({ content: 'No playable radio stream was found' });
+    if (!result || !result.tracks.length) {
+      client.logger.log(`[PLAYBACK] No playable stream found for guild ${interaction.guildId}`, "warn");
+      return interaction.editReply({ content: 'No playable radio stream was found' });
+    }
     if (result.type === "PLAYLIST") {
       for (let track of result.tracks) player.queue.add(track);
     } else {
       player.queue.add(result.tracks[0]);
     }
+    client.logger.log(
+      `[PLAYBACK] Queued ${result.tracks.length} track(s) for guild ${interaction.guildId}; selected "${result.tracks[0]?.title}" from ${result.tracks[0]?.uri}`,
+      "log",
+    );
 
  const played = new MessageEmbed()
                     .setColor("#DDBD86")
@@ -79,7 +91,12 @@ module.exports = {
 <:notes:1119915814733217843> Successfully joined and bound to ${interaction.member.voice.channel}.`)
 
     await player.setVolume(DEFAULT_VOLUME);
+    client.logger.log(`[PLAYBACK] Volume set to ${DEFAULT_VOLUME} for guild ${interaction.guildId}`, "log");
     if (!player.playing && !player.paused) await player.play();
+    client.logger.log(
+      `[PLAYBACK] Play invoked for guild ${interaction.guildId}; playing=${player.playing}, paused=${player.paused}, queue=${getQueueSize(player)}`,
+      "log",
+    );
     await player.setLoop('queue');
 
     await interaction.followUp({ embeds: [played] });
@@ -100,12 +117,23 @@ function getDefaultVolume() {
   return Math.min(100, Math.max(1, volume));
 }
 
-async function searchFirstResult(player, queries, requester) {
+function getQueueSize(player) {
+  if (typeof player.queue?.size === "number") return player.queue.size;
+  if (typeof player.queue?.length === "number") return player.queue.length;
+  if (Array.isArray(player.queue)) return player.queue.length;
+  return "unknown";
+}
+
+async function searchFirstResult(client, player, queries, requester) {
   for (const query of queries) {
     try {
+      client.logger.log(`[PLAYBACK] Searching stream candidate: ${query}`, "log");
       const result = await player.search(query, { requester });
-      if (result && result.tracks && result.tracks.length) return result;
-    } catch (_) {
+      const trackCount = result?.tracks?.length || 0;
+      client.logger.log(`[PLAYBACK] Search result type=${result?.type || "unknown"} tracks=${trackCount} for ${query}`, "log");
+      if (trackCount) return result;
+    } catch (error) {
+      client.logger.log(`[PLAYBACK] Search failed for ${query}: ${error.message}`, "error");
       continue;
     }
   }
