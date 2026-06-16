@@ -177,6 +177,7 @@ console.clear()
           return;
         }
 
+        await this.application.commands.set([]);
         await Promise.all(guilds.map((guild) => guild.commands.set(data)));
         this.logger.log(`Successfully Loaded Slash Commands on ${guilds.length} guild${guilds.length > 1 ? "s" : ""}`, "cmd");
       } catch (e) {
