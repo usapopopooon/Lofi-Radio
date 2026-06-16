@@ -25,7 +25,7 @@ services:
       INVITE: ${INVITE:-}
       VOTE: ${VOTE:-}
       BG: ${BG:-}
-      NODE_URL: lavalink:2333
+      NODE_URL: lavalink:${LAVALINK_PORT:-8080}
       NODE_NAME: Main
       NODE_AUTH: ${LAVALINK_PASSWORD:-youshallnotpass}
       NODE_SECURE: "false"
@@ -50,7 +50,9 @@ services:
     restart: unless-stopped
     mem_limit: ${LAVALINK_MEMORY_LIMIT:-512m}
     environment:
+      LAVALINK_PORT: ${LAVALINK_PORT:-8080}
       LAVALINK_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
+      SERVER_PORT: ${LAVALINK_PORT:-8080}
       _JAVA_OPTIONS: ${LAVALINK_JAVA_OPTIONS:--Xmx384m}
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro

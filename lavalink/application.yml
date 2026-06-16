@@ -1,5 +1,5 @@
 server:
-  port: 2333
+  port: "${LAVALINK_PORT:8080}"
   address: 0.0.0.0
 
 lavalink:
