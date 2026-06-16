@@ -28,6 +28,7 @@ services:
       NODE_NAME: Main
       NODE_AUTH: ${LAVALINK_PASSWORD:-youshallnotpass}
       NODE_SECURE: "false"
+      LAVALINK_WAIT_TIMEOUT_MS: ${LAVALINK_WAIT_TIMEOUT_MS:-120000}
     expose:
       - "8080"
 

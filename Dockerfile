@@ -24,4 +24,4 @@ COPY . .
 ENV NODE_ENV=production
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["node", "scripts/start-with-lavalink-wait.js"]
