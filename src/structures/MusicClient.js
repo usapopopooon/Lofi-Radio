@@ -168,10 +168,20 @@ console.clear()
       }
     });
     this.on("ready", async () => {
+      try {
+        const guilds = [...this.guilds.cache.values()];
 
-      
-      await this.application.commands.set(data).then(() => 
-         this.logger.log(`Successfully Loaded All Slash Commands`, "cmd")).catch((e) => console.log(e));
+        if (!guilds.length) {
+          await this.application.commands.set(data);
+          this.logger.log("Successfully Loaded All Global Slash Commands", "cmd");
+          return;
+        }
+
+        await Promise.all(guilds.map((guild) => guild.commands.set(data)));
+        this.logger.log(`Successfully Loaded Slash Commands on ${guilds.length} guild${guilds.length > 1 ? "s" : ""}`, "cmd");
+      } catch (e) {
+        console.log(e);
+      }
     });
   }
   async _connectMongodb() {
