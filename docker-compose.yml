@@ -27,7 +27,7 @@ services:
       BG: ${BG:-}
       NODE_URL: lavalink:${LAVALINK_PORT:-8080}
       NODE_NAME: Main
-      NODE_AUTH: ${LAVALINK_PASSWORD:-youshallnotpass}
+      NODE_AUTH: ${LAVALINK_SERVER_PASSWORD:-${LAVALINK_PASSWORD:-youshallnotpass}}
       NODE_SECURE: "false"
       LAVALINK_WAIT_TIMEOUT_MS: ${LAVALINK_WAIT_TIMEOUT_MS:-120000}
     expose:
@@ -52,6 +52,7 @@ services:
     environment:
       LAVALINK_PORT: ${LAVALINK_PORT:-8080}
       LAVALINK_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
+      LAVALINK_SERVER_PASSWORD: ${LAVALINK_SERVER_PASSWORD:-${LAVALINK_PASSWORD:-youshallnotpass}}
       SERVER_PORT: ${LAVALINK_PORT:-8080}
       _JAVA_OPTIONS: ${LAVALINK_JAVA_OPTIONS:--Xmx384m}
     volumes:
