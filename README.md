@@ -70,7 +70,7 @@ node src/index.js
 ## Coolify / Docker Compose
 
 The easiest deployment path is Docker Compose. This repository includes the bot,
-MongoDB, and Lavalink in `compose.yaml`.
+MongoDB, and Lavalink in `docker-compose.yml`.
 
 1. Create a new Docker Compose project in Coolify.
 2. Point it at this repository.
